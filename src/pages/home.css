@@ -1,0 +1,77 @@
+.noticias-resumidas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .noticia-resumida {
+    cursor: pointer;
+    display: flex;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+  .noticia-resumida:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .noticia-resumida img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+    width: 20pc;
+
+  }
+  
+  .ver-noticia-completa {
+    display: block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .ver-noticia-completa:hover {
+    background-color: #0056b3;
+  }
+  #title{
+    text-align: center;
+    font-size: 2.2pc;
+    font-weight: 500;
+    color: var(--secondary);
+  }
+  .subtitulo{
+    background-color: #0056b3;
+
+  }
+  #span{
+    color: white;
+  }
+  #sub {
+    font-size: 18px;
+    background-color: #0056b3;
+    color: white; /* Adicionei a cor do texto para melhor visibilidade */
+    padding: 10px; /* Adicionei padding para melhor visualização */
+    overflow: hidden; /* Oculta o conteúdo que extrapola os limites do elemento */
+    white-space: nowrap; /* Impede a quebra de linha */
+    animation: scrolling-text 20s linear infinite; /* Aplica a animação ao texto */
+  }
+  
+  @keyframes scrolling-text {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  

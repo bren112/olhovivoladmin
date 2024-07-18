@@ -1,0 +1,131 @@
+/* Noticias.css */
+
+.noticias-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+  }
+  
+  .noticia {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+  }
+  #tt{
+    text-align: center;
+    font-size: 1.3pc;
+    font-weight: 500;
+  }
+  #resum{
+    text-align: justify;
+  }
+  .btn{
+    background-color: var(--secondary);
+    border: none;
+    border-radius: 5pc;
+    color: white;
+    width: 5pc;
+    height: 2pc;
+  }
+#input{
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: #F0F1F8;
+    border-radius: 6px;
+    padding: 0 15px;
+    resize: none;
+  }
+  .btn2{
+    background-color: var(--secondary);
+    border: none;
+    border-radius: 5pc;
+    color: white;
+    width: 4pc;
+    height: 3pc;
+  }
+  .noticia h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .noticia p {
+    margin-bottom: 15px;
+  }
+  
+  .noticia img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    width: 20pc;
+  }
+  
+  .formulario {
+    margin-bottom: 20px;
+  }
+  
+  .formulario input,
+  .formulario textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .formulario button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .formulario button:hover {
+    background-color: #0056b3;
+  }
+  
+  .formulario hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 20px 0;
+  }
+  #titulo{
+    text-align: center;
+    font-weight: 700;
+  }
+  .img{
+    display: flex;
+    justify-content: center;
+  }
+  .noticia h3.selected {
+    color: red; /* Example highlighting */
+  }
+  .lupa{
+    color: white;
+  }
+  #title{
+    text-align: center;
+    font-size: 2.2pc;
+    font-weight: 500;
+    color: var(--secondary);
+  }
+  .procurar{
+    display: flex;
+    justify-content: end;
+  }
+  .search{
+    margin-right: 2pc;
+    display: flex;
+    gap: 1pc;
+  }
