@@ -8,7 +8,7 @@ function Adm() {
   const [novoResumo, setNovoResumo] = useState('');
   const [novoTexto, setNovoTexto] = useState('');
   const [novoImagem, setNovoImagem] = useState('');
-  const [novoEstilo, setNovoEstilo] = useState('');
+  const [novoEstilo, setNovoEstilo] = useState('Esporte'); // Valor padrão como 'Esporte'
 
   useEffect(() => {
     fetchNoticias();
@@ -48,7 +48,7 @@ function Adm() {
       setNovoResumo('');
       setNovoTexto('');
       setNovoImagem('');
-      setNovoEstilo('');
+      setNovoEstilo('Esporte'); // Reseta para 'Esporte' após inserção
       // Atualiza a lista de notícias após inserção
       fetchNoticias();
     } catch (error) {
@@ -75,11 +75,11 @@ function Adm() {
   return (
     <div className="admin-container">
       <h2>Área Administrativa</h2>
-<br />
+      <br />
       <div className="form-container">
         <form onSubmit={handleSubmit}>
           <h3>Inserir Nova Notícia</h3>
-<br />
+          <br />
 
           <input
             type="text"
@@ -111,20 +111,25 @@ function Adm() {
             required
           />
           <br />
-          <input
-            type="text"
-            placeholder="Estilo"
+          <select
             value={novoEstilo}
             onChange={(e) => setNovoEstilo(e.target.value)}
             required
-          />
+          >
+            <option value="Esporte">Esporte</option>
+            <option value="Variedades">Variedades</option>
+            <option value="Cultura">Cultura</option>
+            <option value="Ciência">Ciência</option>
+            <option value="Casos">Casos</option>
+          </select>
+          <br />
           <br />
           <button type="submit">Enviar Notícia</button>
         </form>
       </div>
 
       <h3>Notícias Cadastradas</h3>
-<br />
+      <br />
 
       <ul className="news-list">
         {noticias.map((noticia) => (
