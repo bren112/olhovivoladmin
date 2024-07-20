@@ -9,9 +9,13 @@ function Adm() {
   const [novoTexto, setNovoTexto] = useState('');
   const [novoImagem, setNovoImagem] = useState('');
   const [novoEstilo, setNovoEstilo] = useState('Esporte'); // Valor padrão como 'Esporte'
+  const [colaboradores, setColaboradores] = useState([]); // Estado para colaboradores
+  const [novoNome, setNovoNome] = useState('');
+  const [novoAvatar, setNovoAvatar] = useState('');
 
   useEffect(() => {
     fetchNoticias();
+    fetchColaboradores();
   }, []);
 
   const fetchNoticias = async () => {
@@ -26,7 +30,19 @@ function Adm() {
     }
   };
 
-  const handleSubmit = async (event) => {
+  const fetchColaboradores = async () => {
+    try {
+      const { data, error } = await supabase.from('colaboradores').select('*');
+      if (error) {
+        throw error;
+      }
+      setColaboradores(data);
+    } catch (error) {
+      console.error('Erro ao buscar colaboradores:', error.message);
+    }
+  };
+
+  const handleSubmitNoticia = async (event) => {
     event.preventDefault();
     try {
       const { data, error } = await supabase.from('noticias').insert([
@@ -43,13 +59,11 @@ function Adm() {
         throw error;
       }
       console.log('Notícia inserida com sucesso:', data);
-      // Limpa os campos do formulário após submissão
       setNovoTitulo('');
       setNovoResumo('');
       setNovoTexto('');
       setNovoImagem('');
-      setNovoEstilo('Esporte'); // Reseta para 'Esporte' após inserção
-      // Atualiza a lista de notícias após inserção
+      setNovoEstilo('Esporte');
       fetchNoticias();
     } catch (error) {
       console.error('Erro ao inserir notícia:', error.message);
@@ -64,10 +78,45 @@ function Adm() {
           throw error;
         }
         console.log('Notícia excluída com sucesso:', data);
-        // Atualiza a lista de notícias após exclusão
         fetchNoticias();
       } catch (error) {
         console.error('Erro ao excluir notícia:', error.message);
+      }
+    }
+  };
+
+  const handleSubmitColaborador = async (event) => {
+    event.preventDefault();
+    try {
+      const { data, error } = await supabase.from('colaboradores').insert([
+        {
+          nome: novoNome,
+          avatar: novoAvatar,
+        },
+      ]);
+      if (error) {
+        throw error;
+      }
+      console.log('Colaborador inserido com sucesso:', data);
+      setNovoNome('');
+      setNovoAvatar('');
+      fetchColaboradores();
+    } catch (error) {
+      console.error('Erro ao inserir colaborador:', error.message);
+    }
+  };
+
+  const handleExcluirColaborador = async (id) => {
+    if (window.confirm('Tem certeza que quer excluir este colaborador?')) {
+      try {
+        const { data, error } = await supabase.from('colaboradores').delete().eq('id', id);
+        if (error) {
+          throw error;
+        }
+        console.log('Colaborador excluído com sucesso:', data);
+        fetchColaboradores();
+      } catch (error) {
+        console.error('Erro ao excluir colaborador:', error.message);
       }
     }
   };
@@ -77,10 +126,9 @@ function Adm() {
       <h2>Área Administrativa</h2>
       <br />
       <div className="form-container">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmitNoticia}>
           <h3>Inserir Nova Notícia</h3>
           <br />
-
           <input
             type="text"
             placeholder="Título"
@@ -118,9 +166,7 @@ function Adm() {
           >
             <option value="Esporte">Esporte</option>
             <option value="Variedades">Variedades</option>
-            <option value="Cultura">Cultura</option>
-            <option value="Ciência">Ciência</option>
-            <option value="Casos">Casos</option>
+            <option value="Noticia">Notícia</option>
           </select>
           <br />
           <br />
@@ -130,12 +176,48 @@ function Adm() {
 
       <h3>Notícias Cadastradas</h3>
       <br />
-
       <ul className="news-list">
         {noticias.map((noticia) => (
           <li key={noticia.id}>
             {noticia.titulo}{' '}
             <button onClick={() => handleExcluirNoticia(noticia.id)}>Excluir</button>
+          </li>
+        ))}
+      </ul>
+      
+      <div className="form-container">
+        <form onSubmit={handleSubmitColaborador}>
+          <h3>Adicionar Colaborador</h3>
+          <br />
+          <input
+            type="text"
+            placeholder="Nome"
+            value={novoNome}
+            onChange={(e) => setNovoNome(e.target.value)}
+            required
+          />
+          <br />
+          <input
+            type="url"
+            placeholder="URL do Avatar"
+            value={novoAvatar}
+            onChange={(e) => setNovoAvatar(e.target.value)}
+            required
+          />
+          <br />
+          <br />
+          <button type="submit">Adicionar Colaborador</button>
+        </form>
+      </div>
+
+      <h3>Colaboradores Cadastrados</h3>
+      <br />
+      <ul className="colaboradores-list">
+        {colaboradores.map((colaborador) => (
+          <li key={colaborador.id}>
+            <img src={colaborador.avatar} alt={colaborador.nome} className="colaborador-avatar" />
+            {colaborador.nome}{' '}
+            <button onClick={() => handleExcluirColaborador(colaborador.id)} id='ex'>Excluir</button>
           </li>
         ))}
       </ul>
