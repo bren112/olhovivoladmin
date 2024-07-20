@@ -165,7 +165,6 @@ function Adm() {
             required
           >
             <option value="Esporte">Esporte</option>
-            <option value="Variedades">Variedades</option>
             <option value="Noticia">Notícia</option>
           </select>
           <br />
