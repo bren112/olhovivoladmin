@@ -7,15 +7,11 @@ function Adm() {
   const [novoTitulo, setNovoTitulo] = useState('');
   const [novoResumo, setNovoResumo] = useState('');
   const [novoTexto, setNovoTexto] = useState('');
-  const [novoImagem, setNovoImagem] = useState('');
-  const [novoEstilo, setNovoEstilo] = useState('Esporte'); // Valor padrão como 'Esporte'
-  const [colaboradores, setColaboradores] = useState([]); // Estado para colaboradores
-  const [novoNome, setNovoNome] = useState('');
-  const [novoAvatar, setNovoAvatar] = useState('');
+  const [novaImagem, setNovaImagem] = useState(null);
+  const [novoEstilo, setNovoEstilo] = useState('Esporte');
 
   useEffect(() => {
     fetchNoticias();
-    fetchColaboradores();
   }, []);
 
   const fetchNoticias = async () => {
@@ -30,39 +26,54 @@ function Adm() {
     }
   };
 
-  const fetchColaboradores = async () => {
-    try {
-      const { data, error } = await supabase.from('colaboradores').select('*');
-      if (error) {
-        throw error;
-      }
-      setColaboradores(data);
-    } catch (error) {
-      console.error('Erro ao buscar colaboradores:', error.message);
-    }
-  };
-
   const handleSubmitNoticia = async (event) => {
     event.preventDefault();
     try {
+      let publicUrl = '';
+
+      // Verifica se uma nova imagem foi selecionada para upload
+      if (novaImagem) {
+        // Realiza o upload da imagem para o bucket
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('imagens')
+          .upload(`noticias/${novoTitulo}.png`, novaImagem, {
+            cacheControl: '3600',
+            upsert: true,
+          });
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        // Obtém a URL pública da imagem após o upload
+        const { data } = supabase
+          .storage
+          .from('imagens')
+          .getPublicUrl(`noticias/${novoTitulo}.png`);
+        publicUrl = data.publicUrl;
+      }
+
+      // Inserindo notícia no banco de dados
       const { data, error } = await supabase.from('noticias').insert([
         {
           titulo: novoTitulo,
           resumo: novoResumo,
           texto: novoTexto,
-          imagem: novoImagem,
+          imagem: publicUrl, // Usa a URL pública da imagem
           estilo: novoEstilo,
           data_publicacao: new Date().toISOString(),
         },
       ]);
+
       if (error) {
         throw error;
       }
+      
       console.log('Notícia inserida com sucesso:', data);
       setNovoTitulo('');
       setNovoResumo('');
       setNovoTexto('');
-      setNovoImagem('');
+      setNovaImagem(null);
       setNovoEstilo('Esporte');
       fetchNoticias();
     } catch (error) {
@@ -81,42 +92,6 @@ function Adm() {
         fetchNoticias();
       } catch (error) {
         console.error('Erro ao excluir notícia:', error.message);
-      }
-    }
-  };
-
-  const handleSubmitColaborador = async (event) => {
-    event.preventDefault();
-    try {
-      const { data, error } = await supabase.from('colaboradores').insert([
-        {
-          nome: novoNome,
-          avatar: novoAvatar,
-        },
-      ]);
-      if (error) {
-        throw error;
-      }
-      console.log('Colaborador inserido com sucesso:', data);
-      setNovoNome('');
-      setNovoAvatar('');
-      fetchColaboradores();
-    } catch (error) {
-      console.error('Erro ao inserir colaborador:', error.message);
-    }
-  };
-
-  const handleExcluirColaborador = async (id) => {
-    if (window.confirm('Tem certeza que quer excluir este colaborador?')) {
-      try {
-        const { data, error } = await supabase.from('colaboradores').delete().eq('id', id);
-        if (error) {
-          throw error;
-        }
-        console.log('Colaborador excluído com sucesso:', data);
-        fetchColaboradores();
-      } catch (error) {
-        console.error('Erro ao excluir colaborador:', error.message);
       }
     }
   };
@@ -152,10 +127,9 @@ function Adm() {
           />
           <br />
           <input
-            type="url"
-            placeholder="URL da Imagem"
-            value={novoImagem}
-            onChange={(e) => setNovoImagem(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={(e) => setNovaImagem(e.target.files[0])}
             required
           />
           <br />
@@ -178,45 +152,9 @@ function Adm() {
       <ul className="news-list">
         {noticias.map((noticia) => (
           <li key={noticia.id}>
-            {noticia.titulo}{' '}
+            <h4>{noticia.titulo}</h4>
+            <img src={noticia.imagem} alt={noticia.titulo} style={{ width: '100px', height: 'auto' }} />
             <button onClick={() => handleExcluirNoticia(noticia.id)}>Excluir</button>
-          </li>
-        ))}
-      </ul>
-      
-      <div className="form-container">
-        <form onSubmit={handleSubmitColaborador}>
-          <h3>Adicionar Colaborador</h3>
-          <br />
-          <input
-            type="text"
-            placeholder="Nome"
-            value={novoNome}
-            onChange={(e) => setNovoNome(e.target.value)}
-            required
-          />
-          <br />
-          <input
-            type="url"
-            placeholder="URL do Avatar"
-            value={novoAvatar}
-            onChange={(e) => setNovoAvatar(e.target.value)}
-            required
-          />
-          <br />
-          <br />
-          <button type="submit">Adicionar Colaborador</button>
-        </form>
-      </div>
-
-      <h3>Colaboradores Cadastrados</h3>
-      <br />
-      <ul className="colaboradores-list">
-        {colaboradores.map((colaborador) => (
-          <li key={colaborador.id}>
-            <img src={colaborador.avatar} alt={colaborador.nome} className="colaborador-avatar" />
-            {colaborador.nome}{' '}
-            <button onClick={() => handleExcluirColaborador(colaborador.id)} id='ex'>Excluir</button>
           </li>
         ))}
       </ul>
